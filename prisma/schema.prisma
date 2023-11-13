@@ -6,3 +6,41 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model Articles {
+  id                     String                 @id @default(uuid())
+  title                  String
+  authors                Authors[]
+  abstract               String
+  keyWords               String
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @default(now())
+  relevantInformation    Relevant_Informations? @relation(fields: [relevant_InformationId], references: [id])
+  relevant_InformationId String                 @unique
+}
+
+model Authors {
+  id        String    @id @default(uuid())
+  name      String
+  lastName  String
+  Article   Articles? @relation(fields: [articleId], references: [id])
+  articleId String?
+}
+
+model Relevant_Informations {
+  id             String           @id @default(uuid())
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  information    String?
+  ownReference   String?
+  referencesUsed Reference_Used[]
+  Article        Articles?
+}
+
+model Reference_Used {
+  id                     String                 @id @default(uuid())
+  createdAt              DateTime               @default(now())
+  reference              String
+  Relevant_Information   Relevant_Informations? @relation(fields: [relevant_InformationId], references: [id])
+  relevant_InformationId String?
+}
